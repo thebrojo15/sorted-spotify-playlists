@@ -4,3 +4,4 @@ server/package-lock.json
 server/package.json
 server/secrets.json
 server/config.json
+server/songs.json

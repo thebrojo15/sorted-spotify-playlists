@@ -3,29 +3,30 @@ import fs from 'fs';
 
 const auth = JSON.parse(fs.readFileSync('./secrets.json'));
 
-// const album = await axios( {
-//     url: 'https://api.spotify.com/v1/albums/7Ex9R18dme801eWfW0RtAe',
-//     method: "get",
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//         'Authorization': 'Bearer ' + auth.access_token,
-//       },
-// });
+const spotifyTracks = [];
+const limit = 50;
+let offset = 0;
+let total = 0;
 
-// console.log(await album.data);
+do {
+  const playlist = await axios( {
+    url: `https://api.spotify.com/v1/playlists/6tAJAQYDLl0zRsYaJy7rfe/tracks?fields=items%28track%28name%2Cartists%28name%29%29%29%2Ctotal%2Climit%2Coffset&limit=${limit}&offset=${offset}`,
+    method: "get",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + auth.access_token,
+      },
+  });
+  
+  const playlistResult = playlist.data;
+  total = playlistResult.total;
+  spotifyTracks.push(...playlistResult.items)
+  offset = offset + limit;
+  
+} while (offset < total);
 
-const playlist = await axios( {
-  url: 'https://api.spotify.com/v1/playlists/6tAJAQYDLl0zRsYaJy7rfe/tracks?fields=items%28track%28name%29%29&limit=10&offset=5',
-  method: "get",
-  headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Bearer ' + auth.access_token,
-    },
-});
-
-console.log(JSON.stringify(playlist.data, null, 1));
+fs.writeFileSync("./songs.json", JSON.stringify(spotifyTracks, null, 2));
 
 // const add = await axios( {
 //     url: 'https://api.spotify.com/v1/playlists/6tAJAQYDLl0zRsYaJy7rfe/tracks',
@@ -67,3 +68,16 @@ console.log(JSON.stringify(playlist.data, null, 1));
 // });
 
 // console.log(await playlist.json());
+
+
+// const album = await axios( {
+//     url: 'https://api.spotify.com/v1/albums/7Ex9R18dme801eWfW0RtAe',
+//     method: "get",
+//     headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//         'Authorization': 'Bearer ' + auth.access_token,
+//       },
+// });
+
+// console.log(await album.data);
