@@ -1,7 +1,9 @@
 node_modules
 server/node_modules
 server/package-lock.json
+package-lock.json
 server/package.json
+package.json
 server/secrets.json
 server/config.json
 server/songs.json
