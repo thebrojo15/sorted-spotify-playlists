@@ -1,9 +1,10 @@
 import axios from 'axios';
 import fs from 'fs';
+import { getTags } from './getTags.js';
 
 const auth = JSON.parse(fs.readFileSync('./secrets.json'));
 
-const spotifyTracks = [];
+const playlistTracks = [];
 const limit = 50;
 let offset = 0;
 let total = 0;
@@ -21,12 +22,36 @@ do {
   
   const playlistResult = playlist.data;
   total = playlistResult.total;
-  spotifyTracks.push(...playlistResult.items)
+  playlistTracks.push(...playlistResult.items)
   offset = offset + limit;
   
 } while (offset < total);
 
-fs.writeFileSync("./songs.json", JSON.stringify(spotifyTracks, null, 2));
+fs.writeFileSync("./songs.json", JSON.stringify(playlistTracks, null, 2));
+
+for (
+  const track of playlistTracks
+){
+  console.log(await getTags(track.track.artists[0].name, track.track.name));
+};
+
+
+
+// https://open.spotify.com/playlist/6tAJAQYDLl0zRsYaJy7rfe?si=96a75fb0d0fb4ced
+
+// fs.writeFileSync("./songs.json", JSON.stringify(playlistTracks, null, 2));
+
+// const search = await axios( {
+//   url: `https://api.spotify.com/v1/search?q=track%253AMirage%2520artist%253AAmaryllis&type=track`,
+//   method: "get",
+//   headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/x-www-form-urlencoded',
+//       'Authorization': 'Bearer ' + auth.access_token,
+//     },
+// });
+
+// fs.writeFileSync("./searchResult.json", JSON.stringify(search.data, null, 2));
 
 // const add = await axios( {
 //     url: 'https://api.spotify.com/v1/playlists/6tAJAQYDLl0zRsYaJy7rfe/tracks',
@@ -42,42 +67,3 @@ fs.writeFileSync("./songs.json", JSON.stringify(spotifyTracks, null, 2));
 //         ]
 //       },
 // });
-
-
-
-
-// const result = await fetch('https://accounts.spotify.com/api/token', {
-//     method: "POST",
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//         'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64'))
-//       },
-//     body: 'grant_type=client_credentials',
-// });
-
-// const auth = await result.json();
-
-// const playlist = await fetch('https://api.spotify.com/v1/albums/7Ex9R18dme801eWfW0RtAe', {
-//     method: "GET",
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//         'Authorization': 'Bearer ' + auth.access_token,
-//       },
-// });
-
-// console.log(await playlist.json());
-
-
-// const album = await axios( {
-//     url: 'https://api.spotify.com/v1/albums/7Ex9R18dme801eWfW0RtAe',
-//     method: "get",
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//         'Authorization': 'Bearer ' + auth.access_token,
-//       },
-// });
-
-// console.log(await album.data);
