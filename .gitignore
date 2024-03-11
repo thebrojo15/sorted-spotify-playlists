@@ -9,3 +9,4 @@ server/config.json
 server/songs.json
 server/searchResult.json
 server/trackTopTags.json
+server/spotifySearch.json

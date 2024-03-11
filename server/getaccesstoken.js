@@ -3,7 +3,7 @@ import fs from 'fs';
 import { userToken } from './oauthget.js';
 const app = express();
 const port = 5173;
-const spotify = JSON.parse(fs.readFileSync('./config.json'));   // add your client ID/secret to config.json (MAKE TEMPLATE)
+const { spotify } = JSON.parse(fs.readFileSync('./config.json'));   // add your client ID/secret to config.json (MAKE TEMPLATE)
 const redirect_uri = 'http://localhost:5173/callback'
 
 app.get('/login', function(req, res) {

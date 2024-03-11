@@ -3,7 +3,7 @@ import fs from 'fs';
 import { userToken } from './oauthget.js';
 const app = express();
 const port = 5173;
-const spotify = JSON.parse(fs.readFileSync('./config.json'));
+const { spotify } = JSON.parse(fs.readFileSync('./config.json'));
 const auth = JSON.parse(fs.readFileSync('./secrets.json'));
 
 const refreshtoken = auth.refresh_token;
