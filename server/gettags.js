@@ -4,10 +4,11 @@ import fs from 'fs';
 const auth = JSON.parse(fs.readFileSync('./config.json'));
 
 // artist and track need + for spaces... look at .replace...?
+// UPDATE: .replace WORKED
 
 export async function getTags(artist, track) {
   const topTags = await axios( {
-    url: `https://ws.audioscrobbler.com/2.0/?method=track.search&artist=${artist}&track=${track}&api_key=${auth.api_key}&format=json`,
+    url: `https://ws.audioscrobbler.com/2.0/?method=track.search&artist=${artist.replace("&", "%26")}&track=${track}&api_key=${auth.api_key}&format=json`,
     method: "get"
   });
 

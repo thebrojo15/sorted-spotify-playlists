@@ -1,8 +1,8 @@
 import axios from 'axios';
 import fs from 'fs';
-import { getTags } from './getTags.js';
+import { getTags } from './gettags.js';
 
-const auth = JSON.parse(fs.readFileSync('./secrets.json'));
+const auth = JSON.parse(fs.readFileSync('./secrets.json'));  // add this
 
 const playlistTracks = [];
 const limit = 50;
@@ -11,7 +11,7 @@ let total = 0;
 
 do {
   const playlist = await axios( {
-    url: `https://api.spotify.com/v1/playlists/6tAJAQYDLl0zRsYaJy7rfe/tracks?fields=items%28track%28name%2Cartists%28name%29%29%29%2Ctotal%2Climit%2Coffset&limit=${limit}&offset=${offset}`,
+    url: `https://api.spotify.com/v1/playlists/6KpToLvrt2Owm5kF6AP5Qp/tracks?fields=items%28track%28name%2Cartists%28name%29%29%29%2Ctotal%2Climit%2Coffset&limit=${limit}&offset=${offset}`,
     method: "get",
     headers: {
         'Accept': 'application/json',
@@ -27,17 +27,21 @@ do {
   
 } while (offset < total);
 
-fs.writeFileSync("./songs.json", JSON.stringify(playlistTracks, null, 2));
+const allTracks = []
 
 for (
   const track of playlistTracks
 ){
-  console.log(await getTags(track.track.artists[0].name, track.track.name));
+  const tagResult = await getTags(track.track.artists[0].name, track.track.name);
+  const trackTags = {artist:(track.track.artists[0].name), name:(track.track.name), tags:tagResult};
+  allTracks.push(trackTags);
+  // fs.appendFileSync("./songs.json", JSON.stringify(trackTags, null, 2));
+  console.log(trackTags);
 };
 
+fs.writeFileSync("./songs.json", JSON.stringify(allTracks, null, 2));
 
-
-// https://open.spotify.com/playlist/6tAJAQYDLl0zRsYaJy7rfe?si=96a75fb0d0fb4ced
+// https://open.spotify.com/playlist/6KpToLvrt2Owm5kF6AP5Qp?si=5659ca59a0ea484a
 
 // fs.writeFileSync("./songs.json", JSON.stringify(playlistTracks, null, 2));
 

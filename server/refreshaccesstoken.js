@@ -1,6 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import { userToken } from './oatuhget.js';
+import { userToken } from './oauthget.js';
 const app = express();
 const port = 5173;
 const spotify = JSON.parse(fs.readFileSync('./config.json'));
