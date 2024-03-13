@@ -11,7 +11,7 @@ let total = 0;
 
 do {
   const playlist = await axios( {
-    url: `https://api.spotify.com/v1/playlists/6KpToLvrt2Owm5kF6AP5Qp/tracks?fields=items%28track%28name%2Cartists%2Curi%28name%29%29%29%2Ctotal%2Climit%2Coffset&limit=${limit}&offset=${offset}`,
+    url: `https://api.spotify.com/v1/playlists/1sG3GRnL0ypRQZolcbO5SK/tracks?fields=items%28track%28name%2Cartists%2Curi%28name%29%29%29%2Ctotal%2Climit%2Coffset&limit=${limit}&offset=${offset}`,
     method: "get",
     headers: {
         'Accept': 'application/json',
@@ -35,13 +35,59 @@ for (
   const tagResult = await getTags(track.track.artists[0].name, track.track.name);
   const trackTags = {artist:(track.track.artists[0].name), name:(track.track.name), uri:(track.track.uri), tags:tagResult};
   allTracks.push(trackTags);
-  // fs.appendFileSync("./songs.json", JSON.stringify(trackTags, null, 2));
   console.log(trackTags);
 };
 
 fs.writeFileSync("./songs.json", JSON.stringify(allTracks, null, 2));
 
-// https://open.spotify.com/playlist/6KpToLvrt2Owm5kF6AP5Qp?si=5659ca59a0ea484a
+const regex = (/liquid/i)
+
+for (
+  const item of allTracks
+){
+  for (
+    const tag of item.tags
+  ){
+    if (regex.test(tag)) {
+      const addTrack = await axios( {
+        url: "https://api.spotify.com/v1/playlists/2Qhhqgnjp6Jbe4udYt4H7N/tracks",
+        method: "post",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + auth.access_token,
+        },
+        data: {
+          "uris": [
+            `${item.uri}`
+        ],
+      },
+      })
+      break;
+    }
+  }};
+
+// test playlist: https://open.spotify.com/playlist/5yW5wolDpvBy2DfhZ7glUD?si=0b600a3862ba46f5
+// i have no idea playlist: https://open.spotify.com/playlist/6KpToLvrt2Owm5kF6AP5Qp?si=5587290b38d44589
+// pretty cool" https://open.spotify.com/playlist/1sG3GRnL0ypRQZolcbO5SK?si=6e95cf6fcfc64920
+// liquid playlist: https://open.spotify.com/playlist/2Qhhqgnjp6Jbe4udYt4H7N?si=2b0aab51ce874113
+
+// const createPlaylist = await axios( {
+//   url: "https://api.spotify.com/v1/users/ec17f49xofduya7g1wgpvax32/playlists",
+//   method: "post",
+//   headers: {
+//     'Accept': 'application/json',
+//     'Content-Type': 'application/json',
+//     'Authorization': 'Bearer ' + auth.access_token,
+//   },
+//   data: {
+//     "name": "Liquid Drum and Bass",
+//     "description": "dnb perfection",
+//     "public": true
+// },
+// });
+
+// https://open.spotify.com/user/ec17f49xofduya7g1wgpvax32?si=9d85acffa2764876
 
 // fs.writeFileSync("./songs.json", JSON.stringify(playlistTracks, null, 2));
 
