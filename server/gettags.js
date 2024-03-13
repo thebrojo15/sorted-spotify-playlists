@@ -7,7 +7,7 @@ const { lastfm } = JSON.parse(fs.readFileSync('./config.json'));
 // UPDATE: .replace WORKED
 
 export async function getTags(artist, track) {
-  const topTags = await axios( {
+  try { const topTags = await axios( {
     url: `https://ws.audioscrobbler.com/2.0/?method=track.search&artist=${artist.replace("&", "%26")}&track=${track}&api_key=${lastfm.api_key}&format=json`,
     method: "get"
   });
@@ -21,4 +21,7 @@ export async function getTags(artist, track) {
       })
       .toArray();
     return trackTags;
+  } catch {
+    console.log("doesn't exist");
+  }
 };

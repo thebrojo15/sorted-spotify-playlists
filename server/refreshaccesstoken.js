@@ -6,6 +6,8 @@ const port = 5173;
 const { spotify } = JSON.parse(fs.readFileSync('./config.json'));
 const auth = JSON.parse(fs.readFileSync('./secrets.json'));
 
+export async function tokenrefresh() {
+
 const refreshtoken = auth.refresh_token;
     console.log(refreshtoken);
 
@@ -24,4 +26,7 @@ const refreshtoken = auth.refresh_token;
     const dataJSON = fs.readFileSync("./secrets.json");
     const data = JSON.parse(dataJSON);
     data.access_token = authToken.access_token;
+    data.expires_in = (Date.now() + 3600000);
     fs.writeFileSync("./secrets.json", JSON.stringify(data, null, 2));
+    return data.access_token;
+};

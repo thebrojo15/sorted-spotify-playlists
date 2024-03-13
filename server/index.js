@@ -1,6 +1,7 @@
 import axios, { all } from 'axios';
 import fs from 'fs';
 import { getTags } from './gettags.js';
+import { tokenrefresh } from './refreshaccesstoken.js';
 
 const auth = JSON.parse(fs.readFileSync('./secrets.json'));  // add this
 
@@ -8,6 +9,13 @@ const playlistTracks = [];
 const limit = 50;
 let offset = 0;
 let total = 0;
+
+if (auth.expires_in <= Date.now()) {
+  auth.access_token = await tokenrefresh();
+}
+else {
+  console.log("we didnt have to do the thing")
+};
 
 do {
   const playlist = await axios( {
@@ -45,7 +53,7 @@ const regex = (/liquid/i)
 for (
   const item of allTracks
 ){
-  for (
+  try { for (
     const tag of item.tags
   ){
     if (regex.test(tag)) {
@@ -65,9 +73,12 @@ for (
       })
       break;
     }
-  }};
+  }} catch {
+  console.log("no tags");
+};
+};
 
-// test playlist: https://open.spotify.com/playlist/5yW5wolDpvBy2DfhZ7glUD?si=0b600a3862ba46f5
+// test playlist: https://open.spotify.com/playlist/5yW5wolDpvBy2DfhZ7glUD?si=feade0d702924f12
 // i have no idea playlist: https://open.spotify.com/playlist/6KpToLvrt2Owm5kF6AP5Qp?si=5587290b38d44589
 // pretty cool" https://open.spotify.com/playlist/1sG3GRnL0ypRQZolcbO5SK?si=6e95cf6fcfc64920
 // liquid playlist: https://open.spotify.com/playlist/2Qhhqgnjp6Jbe4udYt4H7N?si=2b0aab51ce874113
